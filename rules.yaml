@@ -1,0 +1,32 @@
+rules:
+  - type: heading
+    regex: "^#{1,6} .+"
+    transform: headingTransform
+
+  - type: bold_double_underscore
+    regex: "__([^_]+)__"
+    transform: boldTransform
+
+  - type: bold_double_asterisk
+    regex: "\\*\\*(.+?)\\*\\*"
+    transform: boldTransform
+
+  - type: italic_single_underscore
+    regex: "_([^_]+)_"
+    transform: italicTransform
+
+  - type: italic_single_asterisk
+    regex: "\\*(.+?)\\*"
+    transform: italicTransform
+
+  - type: inline_code
+    regex: "`([^`]+)`"
+    transform: codeTransform
+
+  - type: unordered_list
+    regex: "^(\\s*)[\\*\\+] (.+)$"
+    transform: listTransform
+
+  - type: link
+    regex: "\\[(.+?)\\]\\((.+?)\\)"
+    transform: linkTransform
