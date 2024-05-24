@@ -1,4 +1,12 @@
 rules:
+  - type: block_title
+    regex: "^\\.\\w+ .+$"
+    transform: blockTitleTransform
+
+  - type: note
+    regex: "\\[NOTE\\](.|\\n)*?====(.|\\n)*?===="
+    transform: noteTransform
+
   - type: heading
     regex: "^#{1,6} .+"
     transform: headingTransform

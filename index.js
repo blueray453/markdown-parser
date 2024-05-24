@@ -1,7 +1,6 @@
 const fs = require('fs');
 const MarkdownParser = require('./parser');
 
-
 // Read MathJax script from file
 const mathjaxScript = fs.readFileSync('mathjax_script.html', 'utf8');
 
@@ -14,6 +13,17 @@ const markdownText = `
 #### Heading level 4
 ##### Heading level 5
 ###### Heading level 6
+
+.Feeding the Werewolves
+[NOTE]
+====
+While werewolves are hardy community members, keep in mind the following dietary concerns:
+
+. They are allergic to cinnamon.
+. More than two glasses of orange juice in 24 hours makes them howl in harmony with alarms and sirens.
+. Celery makes them sad.
+====
+
 __bold text__
 **bold text**
 _italic text_

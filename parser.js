@@ -3,6 +3,15 @@ const yaml = require('js-yaml');
 
 // Define the transformation functions
 const transformFunctions = {
+    noteTransform: (match) => {
+        const content = match[0].replace('[NOTE]', '').replace(/====/g, '').trim();
+        return `<div class="note">${content}</div>`;
+    },
+    blockTitleTransform: (match) => {
+        const content = match[0].substring(1).trim(); // Remove the leading period
+        const title = content.substring(content.indexOf(' ') + 1).trim(); // Extract the title content
+        return `<div class="title">${title}</div>`; // Assuming all block titles are treated as level 2 headers
+    },
     headingTransform: (match) => {
         const level = match[0].split(' ')[0].length;
         const content = match[0].substring(level + 1).trim();
