@@ -29,6 +29,10 @@ const transformFunctions = {
         const text = match[1];
         const url = match[2];
         return `<a href="${url}">${text}</a>`;
+    },
+    mathTransform: (match) => {
+        const content = match[1];
+        return `\\(${content}\\)`; // Wrap math formulas with MathJax tags
     }
 };
 
@@ -57,24 +61,4 @@ class MarkdownParser {
     }
 }
 
-// Example usage
-const parser = new MarkdownParser('rules.yaml');
-const markdownText = `
-# Heading level 1
-## Heading level 2
-### Heading level 3
-#### Heading level 4
-##### Heading level 5
-###### Heading level 6
-__bold text__
-**bold text**
-_italic text_
-*italic text*
-\`word\`
-+ First item
-+ Second item
-[Guide](https://www.google.com)
-`;
-
-const htmlText = parser.parse(markdownText);
-console.log(htmlText);
+module.exports = MarkdownParser;

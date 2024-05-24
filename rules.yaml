@@ -30,3 +30,7 @@ rules:
   - type: link
     regex: "\\[(.+?)\\]\\((.+?)\\)"
     transform: linkTransform
+
+  - type: math
+    regex: "\\$([^$]+)\\$" # Regular expression to match math formulas
+    transform: mathTransform
