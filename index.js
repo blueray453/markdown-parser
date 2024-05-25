@@ -39,7 +39,7 @@ $\\sqrt{x^2 + y^2}$
 const ast = parser.parseToAST(markdownText);
 
 // Print the AST
-console.log('Generated AST:', JSON.stringify(ast, null, 2));
+// console.log('Generated AST:', JSON.stringify(ast, null, 2));
 
 // Convert AST to HTML
 const htmlText = parser.astToHtml(ast);
