@@ -35,7 +35,14 @@ _italic text_
 $\\sqrt{x^2 + y^2}$
 `;
 
-const htmlText = parser.parse(markdownText);
+// Generate the AST
+const ast = parser.parseToAST(markdownText);
+
+// Print the AST
+console.log('Generated AST:', JSON.stringify(ast, null, 2));
+
+// Convert AST to HTML
+const htmlText = parser.astToHtml(ast);
 
 // Combine HTML output with MathJax script
 const finalHtml = `

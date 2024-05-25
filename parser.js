@@ -1,48 +1,17 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-// Define the transformation functions
+// Define the transformation functions for AST to HTML
 const transformFunctions = {
-    noteTransform: (match) => {
-        const content = match[0].replace('[NOTE]', '').replace(/====/g, '').trim();
-        return `<div class="note">${content}</div>`;
-    },
-    blockTitleTransform: (match) => {
-        const content = match[0].substring(1).trim(); // Remove the leading period
-        const title = content.substring(content.indexOf(' ') + 1).trim(); // Extract the title content
-        return `<div class="title">${title}</div>`; // Assuming all block titles are treated as level 2 headers
-    },
-    headingTransform: (match) => {
-        const level = match[0].split(' ')[0].length;
-        const content = match[0].substring(level + 1).trim();
-        return `<h${level}>${content}</h${level}>`;
-    },
-    boldTransform: (match) => {
-        const content = match[1];
-        return `<strong>${content}</strong>`;
-    },
-    italicTransform: (match) => {
-        const content = match[1];
-        return `<em>${content}</em>`;
-    },
-    codeTransform: (match) => {
-        const content = match[1];
-        return `<code>${content}</code>`;
-    },
-    listTransform: (match) => {
-        const indent = match[1].replace(/ /g, "&nbsp;");
-        const content = match[2];
-        return `${indent}• ${content}`;
-    },
-    linkTransform: (match) => {
-        const text = match[1];
-        const url = match[2];
-        return `<a href="${url}">${text}</a>`;
-    },
-    mathTransform: (match) => {
-        const content = match[1];
-        return `\\(${content}\\)`; // Wrap math formulas with MathJax tags
-    }
+    noteTransform: (content) => `<div class="note">${content}</div>`,
+    blockTitleTransform: (content) => `<div class="title">${content}</div>`,
+    headingTransform: (level, content) => `<h${level}>${content}</h${level}>`,
+    boldTransform: (content) => `<strong>${content}</strong>`,
+    italicTransform: (content) => `<em>${content}</em>`,
+    codeTransform: (content) => `<code>${content}</code>`,
+    listTransform: (content) => `<li>${content}</li>`,
+    linkTransform: (text, url) => `<a href="${url}">${text}</a>`,
+    mathTransform: (content) => `\\(${content}\\)`,
 };
 
 // Load the rules from the YAML file
@@ -58,15 +27,48 @@ class MarkdownParser {
         this.rules = loadRules(rulesFile);
     }
 
-    parse(text) {
+    parseToAST(text) {
+        const ast = [];
         for (const rule of this.rules) {
             const pattern = new RegExp(rule.regex, 'gm');
-            const transformFunction = transformFunctions[rule.transform];
-            text = text.replace(pattern, (match, ...args) => {
-                return transformFunction([match, ...args]);
-            });
+            let match;
+            while ((match = pattern.exec(text)) !== null) {
+                ast.push({ type: rule.transform, match });
+            }
         }
-        return text;
+        return ast;
+    }
+
+    astToHtml(ast) {
+        let html = '';
+        for (const node of ast) {
+            const transformFunction = transformFunctions[node.type];
+            switch (node.type) {
+                case 'headingTransform':
+                    const level = node.match[0].split(' ')[0].length;
+                    const content = node.match[0].substring(level + 1).trim();
+                    html += transformFunction(level, content);
+                    break;
+                case 'listTransform':
+                    html += transformFunction(node.match[2]);
+                    break;
+                case 'linkTransform':
+                    html += transformFunction(node.match[1], node.match[2]);
+                    break;
+                case 'mathTransform':
+                    html += transformFunction(node.match[1]);
+                    break;
+                default:
+                    html += transformFunction(node.match[1] || node.match[0]);
+                    break;
+            }
+        }
+        return html;
+    }
+
+    parse(text) {
+        const ast = this.parseToAST(text);
+        return this.astToHtml(ast);
     }
 }
 
